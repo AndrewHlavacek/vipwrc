@@ -65,7 +65,6 @@ print(f"League wRC per PA: {lg_wRC_per_PA:.6f}")
 # wRC+ = [(wRAA per PA + lgRPPA) + ((lgRPPA - ballparkFactor * lgRPPA) / lgWRC_per_PA_no_pitchers)] * 100]
 
 print("\nCalculating wRC+...")
-df['wRC_per_PA'] = df['wRC'] / df['PA']
 
 
 df['wRC_plus'] = (((df['wRAA'] / df['PA']) + lgRPPA) + (lgRPPA - #ballparkFactor * lgRPPA / lg_wRC_per_PA)) * 100
