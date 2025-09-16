@@ -1,6 +1,8 @@
 import pandas as pd
 
 # Read the CSV file
+
+# FILTER SO THERE ARE NO PITCHERS
 df = pd.read_csv('/Users/andrewhlavacek/Downloads/vip_wrc+/wrc.csv')
 
 # Display basic info about the dataset
@@ -14,9 +16,16 @@ print(df.head())
 
 # League averages (these would typically be calculated from the full dataset)
 # For demonstration, using sample values - in practice, calculate these from your data
+
+# League weighted on base average
 lgWOBA = 0.378
+
+# woba scale use this website https://rfrey22.medium.com/collegiate-linear-weights-f0237cf40451
 lgWOBA_scale = 1.2
+
+# League Runs per PA
 lgRPPA = 0.173
+
 
 # ------------------------------------------------------------
 
@@ -53,10 +62,13 @@ print(f"League wRC per PA: {lg_wRC_per_PA:.6f}")
 # ------------------------------------------------------------
 
 # Calculate wRC+ (Weighted Runs Created Plus)
-# wRC+ = (wRC / PA) / (lgwRC / lgPA) * 100
+# wRC+ = [(wRAA per PA + lgRPPA) + ((lgRPPA - ballparkFactor * lgRPPA) / lgWRC_per_PA_no_pitchers)] * 100]
+
 print("\nCalculating wRC+...")
 df['wRC_per_PA'] = df['wRC'] / df['PA']
-df['wRC_plus'] = (((df['wRAA'] / df['PA']) + lgRPPA) + (lgRPPA - #ballparkFactor * lgRPPA / lgwRC_per_PA)) * 100
+
+
+df['wRC_plus'] = (((df['wRAA'] / df['PA']) + lgRPPA) + (lgRPPA - #ballparkFactor * lgRPPA / lg_wRC_per_PA)) * 100
 
 
 # ------------------------------------------------------------
