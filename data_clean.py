@@ -40,7 +40,7 @@ print(f"League Runs per PA: {lgRPPA}")
 # ------------------------------------------------------------
 
 print("\nCalculating wRC...")
-df['wRC'] = ((df['wOBA'] - lgWOBA) / lgWOBA + lgRPPA) * df['PA']
+df['wRC'] = ((df['wOBA'] - lgWOBA) / lgWOBA_scale + lgRPPA) * df['PA']
 
 # ------------------------------------------------------------
 
