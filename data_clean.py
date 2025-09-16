@@ -47,25 +47,30 @@ df['wRC'] = ((df['wOBA'] - lgWOBA) / lgWOBA_scale + lgRPPA) * df['PA']
 print("\nCalculating Ballpark Factor...")
 # Read ballpark games and compute ballpark factor
 games_csv_path = '/Users/leozheng/Projects/VIP/vipwrc/GT Baseball Ballpark - Sheet1.csv'
-games_df = pd.read_csv(games_csv_path)
 
-# Identify home games by Location containing "Atlanta" (case-insensitive)
-games_df['is_home'] = games_df['Location'].astype(str).str.lower().str.contains('atlanta')
+try:
+    games_df = pd.read_csv(games_csv_path)
 
-# Extract total runs scored in the game from Time/Result, e.g., "W 11-4 (7 Inn)" -> 11 + 4 = 15
-score_pairs = games_df['Time/Result'].astype(str).str.extract(r'(\d+)\s*-\s*(\d+)')
-score_pairs = score_pairs.apply(pd.to_numeric, errors='coerce')
-games_df['total_runs'] = score_pairs.sum(axis=1)
+    # Identify home games by Location containing "Atlanta" (case-insensitive)
+    games_df['is_home'] = games_df['Location'].astype(str).str.lower().str.contains('atlanta')
 
-home_total_runs = games_df.loc[games_df['is_home'], 'total_runs'].sum(min_count=1)
-away_total_runs = games_df.loc[~games_df['is_home'], 'total_runs'].sum(min_count=1)
+    # Extract total runs scored in the game from Time/Result, e.g., "W 11-4 (7 Inn)" -> 11 + 4 = 15
+    score_pairs = games_df['Time/Result'].astype(str).str.extract(r'(\d+)\s*-\s*(\d+)')
+    score_pairs = score_pairs.apply(pd.to_numeric, errors='coerce')
+    games_df['total_runs'] = score_pairs.sum(axis=1)
 
-if pd.isna(home_total_runs) or pd.isna(away_total_runs) or away_total_runs == 0:
-    ballparkFactor = float('nan')
-else:
-    ballparkFactor = (home_total_runs / 37) / (away_total_runs / 25)
+    home_total_runs = games_df.loc[games_df['is_home'], 'total_runs'].sum(min_count=1)
+    away_total_runs = games_df.loc[~games_df['is_home'], 'total_runs'].sum(min_count=1)
 
-print(f"Ballpark Factor (home total runs / away total runs): {ballparkFactor}")
+    if pd.isna(home_total_runs) or pd.isna(away_total_runs) or away_total_runs == 0:
+        ballparkFactor = float('nan')
+    else:
+        ballparkFactor = (home_total_runs / 37) / (away_total_runs / 25)
+
+    print(f"Ballpark Factor (home total runs / away total runs): {ballparkFactor}")
+except FileNotFoundError:
+    print("Ballpark games CSV file not found. Using default ballpark factor of 1.0")
+    ballparkFactor = 1.0
 
 # Calculate league average wRC for wRC+ calculation
 # wRC+ = [(wRAA per PA + lgRPPA) + ((lgRPPA - ballparkFactor * lgRPPA) / lgWRC_per_PA_no_pitchers)] * 100
