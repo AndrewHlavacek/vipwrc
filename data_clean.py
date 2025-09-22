@@ -46,7 +46,7 @@ df['wRC'] = ((df['wOBA'] - lgWOBA) / lgWOBA_scale + lgRPPA) * df['PA']
 
 print("\nCalculating Ballpark Factor...")
 # Read ballpark games and compute ballpark factor
-games_csv_path = '/Users/leozheng/Projects/VIP/vipwrc/GT Baseball Ballpark - Sheet1.csv'
+games_csv_path = '/Users/andrewhlavacek/Downloads/vipwrc+/GT Baseball Ballpark - Sheet1.csv'
 
 try:
     games_df = pd.read_csv(games_csv_path)
@@ -91,6 +91,7 @@ print(f"League wRC per PA: {lg_wRC_per_PA:.6f}")
 # wRC+ = [(wRAA per PA + lgRPPA) + ((lgRPPA - ballparkFactor * lgRPPA) / lgWRC_per_PA_no_pitchers)] * 100]
 
 print("\nCalculating wRC+...")
+df['wRC_per_PA'] = df['wRC'] / df['PA']
 
 
 
@@ -101,7 +102,7 @@ df['wRC_plus'] = (((df['wRAA'] / df['PA']) + lgRPPA) + ((lgRPPA - (ballparkFacto
 
 # Display results
 print("\nResults:")
-print(df[['playerFullName', 'PA', 'wRAA', 'wRC', 'wRC_per_PA', 'wRC_plus']].head(10))
+print(df[['playerFullName', 'PA', 'wRAA', 'wRC', 'wRC_per_PA', 'wRC_plus']].sort_values(by='wRC_plus', ascending=False).head(10))
 
 # ------------------------------------------------------------
 
