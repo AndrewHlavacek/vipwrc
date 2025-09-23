@@ -3,7 +3,7 @@ import pandas as pd
 # Read the CSV file
 
 # FILTER SO THERE ARE NO PITCHERS
-df = pd.read_csv('/Users/andrewhlavacek/Downloads/vipwrc+/wrc.csv')
+df = pd.read_csv('/Users/andrewhlavacek/Downloads/vipwrc+/acc.csv')
 
 # Display basic info about the dataset
 print("Dataset shape:", df.shape)
@@ -97,12 +97,19 @@ df['wRC_per_PA'] = df['wRC'] / df['PA']
 
 df['wRC_plus'] = (((df['wRAA'] / df['PA']) + lgRPPA) + ((lgRPPA - (ballparkFactor * lgRPPA)) / lg_wRC_per_PA)) * 100
 
+# Calculate scaled wRC+ using the simple scaling equation
+# wRC+_scaled = (Player wRC / League Average wRC) × 100
+print("\nCalculating scaled wRC+...")
+league_avg_wRC = df['wRC'].mean()  # Calculate league average wRC
+df['wRC_plus_scaled'] = (df['wRC'] / league_avg_wRC) * 100
+
+print(f"League Average wRC: {league_avg_wRC:.3f}")
 
 # ------------------------------------------------------------
 
 # Display results
 print("\nResults:")
-print(df[['playerFullName', 'PA', 'wRAA', 'wRC', 'wRC_per_PA', 'wRC_plus']].sort_values(by='wRC_plus', ascending=False).head(10))
+print(df[['playerFullName', 'PA', 'wRAA', 'wRC', 'wRC_per_PA', 'wRC_plus', 'wRC_plus_scaled']].sort_values(by='wRC_plus_scaled', ascending=False).head(10))
 
 # ------------------------------------------------------------
 
@@ -113,6 +120,9 @@ print(f"\nSummary Statistics:")
 print(f"wRC+ Mean: {df['wRC_plus'].mean():.1f}")
 print(f"wRC+ Median: {df['wRC_plus'].median():.1f}")
 print(f"wRC+ Std Dev: {df['wRC_plus'].std():.1f}")
+print(f"wRC+ Scaled Mean: {df['wRC_plus_scaled'].mean():.1f}")
+print(f"wRC+ Scaled Median: {df['wRC_plus_scaled'].median():.1f}")
+print(f"wRC+ Scaled Std Dev: {df['wRC_plus_scaled'].std():.1f}")
 
 
 # ------------------------------------------------------------
@@ -120,6 +130,6 @@ print(f"wRC+ Std Dev: {df['wRC_plus'].std():.1f}")
 
 
 # Save results to new CSV
-output_file = '/Users/andrewhlavacek/Downloads/vipwrc+/wrc.csv'
+output_file = '/Users/andrewhlavacek/Downloads/vipwrc+/acc.csv'
 df.to_csv(output_file, index=False)
 print(f"\nResults saved to: {output_file}")
